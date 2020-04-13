@@ -1,4 +1,4 @@
-from controller import Controller
+from core.controllers.controller import Controller
 from coinbase.wallet.client import Client
 import cbpro
 from datetime import datetime
@@ -19,7 +19,7 @@ class Coinbase(Controller):
         
     def get_historic_prices(self,product='BTC-USD'):
         """
-        Return the hisotric prices using the pro client. 
+        Return the hisotric prices using the pro client. Maximum number of candles returned is 300
         Order returned is [ time, low, high, open, close, volume ]
         """
         return self.__proclient.get_product_historic_rates(product,start=datetime(2020,4,1,8),end=datetime(2020,4,1,9),granularity=60)
@@ -28,6 +28,6 @@ class Coinbase(Controller):
         return self.__client.get_spot_price(date=datetime(2020,4,1))
 
 
-client = Coinbase()
-print(len(client.get_historic_prices()))
-#print (datetime(2020,4,1,8,30))
+if __name__ == "__main__":
+    print ('name')
+    
