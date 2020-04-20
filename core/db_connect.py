@@ -5,7 +5,7 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class Db_Adapter(object):
+class DbAdapter(object):
     __instance = None
     __connection = None
     __cursor = None
@@ -13,7 +13,7 @@ class Db_Adapter(object):
     # Singleton class instantiation
     def __new__(cls):
         if cls.__instance is None:
-            cls.__instance = super(Db_Adapter, cls).__new__(cls)
+            cls.__instance = super(DbAdapter, cls).__new__(cls)
         return cls.__instance
 
     def connect_to_database(self):
@@ -37,25 +37,20 @@ class Db_Adapter(object):
             logger.error("Failed to connect to db database.db")
             raise
 
-    def set_table(self,table_name):
-        """
-        Set the table name to send queries to
-        """
-        self.__table_name = table_name
-
-    def insert_into_coinbase_historic_data_bitcoin(self, datetime, open, high, low, close, volume):
-        """
-        Insert prices into the database
-        """
-        sql_params = (datetime, open, high, low, close, volume)
-
-        sql_query = """
-            INSERT INTO coinbase_historic_data_bitcoin (datetime, Open, High, Low, Close, Volume) 
-            VALUES (?,?,?,?,?,?)
-        """
+    def execute(self, sql_query, sql_params):
         try:
-            self.__cursor.execute(sql_query, (sql_params,))
-            self.__connection.commit()
+            self.__cursor.execute(sql_query, sql_params)
+
+        except sqlite3.Error as e:
+            logger.error("Failed to connect to db database.db")
+            raise
+
+    def fetch_one(self, sql_query):
+        try:
+            result = self.__cursor.execute(sql_query).fetchone()
+            if result:
+                return result[0]
+            return result
 
         except sqlite3.Error as e:
             logger.error("Failed to connect to db database.db")
@@ -73,14 +68,13 @@ class Db_Adapter(object):
         """
         try:
             self.__cursor.execute(sql_query, (sql_params,))
-            self.__connection.commit()
 
         except sqlite3.Error as e:
             logger.error("Failed to connect to db database.db")
             raise
 
-
-
+    def commit_change(self):
+        self.__connection.commit()
 
 
 
