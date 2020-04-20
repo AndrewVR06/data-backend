@@ -124,7 +124,7 @@ venv.bak/
 .vscode/
 
 # Ignore databases
-.db
+*.db
 
 # mypy
 .mypy_cache/
